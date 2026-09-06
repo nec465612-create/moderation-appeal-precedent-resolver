@@ -114,7 +114,7 @@ export function JournalDrawer({
                       )}
                     </div>
                   )}
-                  {record.status === "RECONCILE" && (
+                  {["SUBMITTED", "RECONCILE"].includes(record.status) && (
                     <div className="meta-field full-width">
                       <button
                         type="button"

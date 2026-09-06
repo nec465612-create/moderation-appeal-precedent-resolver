@@ -12,7 +12,7 @@ beforeEach(() => {
 
 async function submitted() {
   const record = await reserveWrite({ chain: "1", contract: ADDRESS, account: ADDRESS, method: "freeze_appeal", intent: "freeze_appeal:1:2", args_json: '["1","2"]', pre_revision: "2", pre_hash: "0".repeat(64) });
-  return updateWrite(record, { status: "RECONCILE", tx_hash: HASH });
+  return updateWrite(record, { status: "SUBMITTED", tx_hash: HASH });
 }
 
 describe("existing-hash reconciliation", () => {

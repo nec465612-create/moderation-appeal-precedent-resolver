@@ -13,7 +13,7 @@ export async function reconcileExisting(
   try {
     receipt = await deps.finalized(record.tx_hash as `0x${string}`);
   } catch {
-    return record;
+    return updateWrite(record, { status: "RECONCILE", tx_hash: record.tx_hash });
   }
   try {
     deps.assertSuccessful(receipt);
