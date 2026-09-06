@@ -1,0 +1,281 @@
+{
+  "ctor": {
+    "params": [
+      [
+        "authority",
+        "address"
+      ]
+    ],
+    "kwparams": {}
+  },
+  "methods": {
+    "add_precedent": {
+      "params": [
+        [
+          "rule_id",
+          "string"
+        ],
+        [
+          "text",
+          "string"
+        ],
+        [
+          "original_disposition",
+          "string"
+        ],
+        [
+          "holding",
+          "string"
+        ],
+        [
+          "expected_registry_revision",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "int",
+      "payable": false
+    },
+    "create_appeal": {
+      "params": [
+        [
+          "nonce",
+          "string"
+        ],
+        [
+          "base_json",
+          "string"
+        ],
+        [
+          "parent",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "int",
+      "payable": false
+    },
+    "freeze_appeal": {
+      "params": [
+        [
+          "id",
+          "int"
+        ],
+        [
+          "expected_revision",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "null",
+      "payable": false
+    },
+    "get_case": {
+      "params": [
+        [
+          "case_id",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "string"
+    },
+    "get_count": {
+      "params": [],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "int"
+    },
+    "get_id_by_nonce": {
+      "params": [
+        [
+          "creator",
+          "address"
+        ],
+        [
+          "nonce",
+          "string"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "int"
+    },
+    "get_precedent": {
+      "params": [
+        [
+          "precedent_id",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "string"
+    },
+    "get_registry": {
+      "params": [],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "string"
+    },
+    "get_version": {
+      "params": [
+        [
+          "case_id",
+          "int"
+        ],
+        [
+          "revision",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "string"
+    },
+    "list_actor": {
+      "params": [
+        [
+          "actor",
+          "address"
+        ],
+        [
+          "offset",
+          "int"
+        ],
+        [
+          "limit",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "string"
+    },
+    "list_cases": {
+      "params": [
+        [
+          "start_id",
+          "int"
+        ],
+        [
+          "limit",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "string"
+    },
+    "list_children": {
+      "params": [
+        [
+          "parent_id",
+          "int"
+        ],
+        [
+          "offset",
+          "int"
+        ],
+        [
+          "limit",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "string"
+    },
+    "list_precedents": {
+      "params": [
+        [
+          "rule_id",
+          "string"
+        ],
+        [
+          "offset",
+          "int"
+        ],
+        [
+          "limit",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "string"
+    },
+    "replace_appeal": {
+      "params": [
+        [
+          "id",
+          "int"
+        ],
+        [
+          "base_json",
+          "string"
+        ],
+        [
+          "expected_revision",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "null",
+      "payable": false
+    },
+    "resolve_appeal": {
+      "params": [
+        [
+          "id",
+          "int"
+        ],
+        [
+          "expected_revision",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "null",
+      "payable": false
+    },
+    "retire_precedent": {
+      "params": [
+        [
+          "precedent_id",
+          "int"
+        ],
+        [
+          "expected_registry_revision",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "null",
+      "payable": false
+    },
+    "retry_appeal": {
+      "params": [
+        [
+          "id",
+          "int"
+        ],
+        [
+          "expected_revision",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "null",
+      "payable": false
+    }
+  }
+}
