@@ -22,6 +22,7 @@ import {
   removeRejected,
   reserveWrite,
   updateWrite,
+  serializeArgs,
   type JournalRecord,
 } from "./pending";
 import { ensureProviderDiscovery, useProviders } from "./wallet/providers";
@@ -34,6 +35,7 @@ import { TransactionHUD, type TxPhase } from "./components/TransactionHUD";
 import { Documentation } from "./components/Documentation";
 import { WalletDialog } from "./components/WalletDialog";
 import { JournalDrawer } from "./components/JournalDrawer";
+import { reconcileExisting } from "./reconcile";
 import "./styles.css";
 
 const ZERO_HASH = "0".repeat(64);
@@ -132,7 +134,7 @@ export default function App() {
         account: wallet.session.address.toLowerCase() as `0x${string}`,
         method,
         intent,
-        args_json: JSON.stringify(args),
+        args_json: serializeArgs(args),
         pre_revision: preRevision,
         pre_hash: ZERO_HASH,
       });
@@ -160,7 +162,6 @@ export default function App() {
       await updateWrite(record, { status: "VERIFIED", tx_hash: txHash });
       await refreshJournal();
       setPhase("SUCCESS");
-      await refresh();
     } catch (cause) {
       const code =
         typeof cause === "object" && cause && "code" in cause
@@ -184,6 +185,42 @@ export default function App() {
       setError(cause instanceof Error ? cause.message : "Transaction verification failed.");
       await refreshJournal();
     }
+  }
+
+  async function verifyRecord(record: JournalRecord) {
+    const args = JSON.parse(record.args_json) as string[];
+    if (record.method === "add_precedent") {
+      const next = await getRegistry();
+      return next.revision === String(BigInt(record.pre_revision) + 1n);
+    }
+    if (record.method === "retire_precedent") {
+      const next = await getPrecedent(String(args[0]));
+      return Boolean(next && !next.active && next.retired_revision === String(BigInt(record.pre_revision) + 1n));
+    }
+    if (record.method === "create_appeal") {
+      return BigInt(await getIdByNonce(record.account, String(args[0]))) > 0n;
+    }
+    const next = await getVersion(String(args[0]), String(BigInt(record.pre_revision) + 1n));
+    if (!next) return false;
+    if (record.method === "replace_appeal") return next.base.content === JSON.parse(String(args[1])).content;
+    if (record.method === "freeze_appeal") return next.phase === "FROZEN";
+    return ["DONE", "UNRESOLVED", "EXHAUSTED"].includes(next.phase);
+  }
+
+  async function reconcile(record: JournalRecord) {
+    if (!CHAIN || record.chain !== String(CHAIN.id) || record.contract !== contractAddress()) {
+      setError("This operation belongs to a different network or contract and was left unchanged.");
+      return;
+    }
+    setError("");
+    setPhase("RECONCILIATION_REQUIRED");
+    const next = await reconcileExisting(record, {
+      finalized,
+      assertSuccessful,
+      verify: () => verifyRecord(record),
+    });
+    await refreshJournal();
+    setPhase(next.status === "VERIFIED" ? "SUCCESS" : next.status === "FINALIZED_ERROR" ? "FAILED" : "RECONCILIATION_REQUIRED");
   }
 
   async function addPrecedent(event: React.FormEvent<HTMLFormElement>) {
@@ -405,6 +442,7 @@ export default function App() {
         records={journalRecords}
         onClose={() => setIsJournalOpen(false)}
         onRefresh={refreshJournal}
+        onReconcile={reconcile}
         explorerUrl={CHAIN?.explorerUrl}
       />
 

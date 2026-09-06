@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { loadJournal, reserveWrite, updateWrite } from "../src/pending";
+import { loadJournal, reserveWrite, serializeArgs, updateWrite } from "../src/pending";
 
 const ADDRESS = `0x${"1".repeat(40)}` as const;
 
@@ -15,6 +15,9 @@ function input(intent = "freeze_appeal:1:2") {
 }
 
 describe("durable operation journal", () => {
+  it("serializes production BigInt arguments for durable readback", () => {
+    expect(serializeArgs([1n, "x", { revision: 2n }])).toBe('["1","x",{"revision":"2"}]');
+  });
   it("reserves before signing and retains an immutable hash", async () => {
     const record = await reserveWrite(input());
     expect(record.status).toBe("SIGNING");

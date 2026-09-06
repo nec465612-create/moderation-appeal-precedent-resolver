@@ -25,6 +25,10 @@ const HEX32 = /^[0-9a-f]{32}$/;
 const HEX64 = /^[0-9a-f]{64}$/;
 const HASH = /^0x[0-9a-fA-F]{64}$/;
 
+export function serializeArgs(args: unknown[]) {
+  return JSON.stringify(args, (_key, value) => typeof value === "bigint" ? value.toString() : value);
+}
+
 function valid(value: unknown): value is JournalRecord {
   if (!value || typeof value !== "object") return false;
   const item = value as Partial<JournalRecord>;

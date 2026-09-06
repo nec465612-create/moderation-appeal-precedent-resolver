@@ -8,6 +8,7 @@ import { AppealsWorkspace } from "../src/components/AppealsWorkspace";
 import { TransactionHUD } from "../src/components/TransactionHUD";
 import { Documentation } from "../src/components/Documentation";
 import { WalletDialog } from "../src/components/WalletDialog";
+import { JournalDrawer } from "../src/components/JournalDrawer";
 import type { AppealRecord, Precedent, Registry } from "../src/contract";
 import type { WalletProviderDetail } from "../src/wallet/types";
 
@@ -340,6 +341,39 @@ describe("WalletDialog Component", () => {
     expect(screen.queryByText("MetaMask")).not.toBeInTheDocument();
     expect(screen.queryByText("OKX Wallet")).not.toBeInTheDocument();
     expect(screen.queryByText("Rabby Wallet")).not.toBeInTheDocument();
+  });
+});
+
+describe("JournalDrawer Component", () => {
+  it("offers existing-hash verification and disables hashless recovery", () => {
+    const onReconcile = vi.fn();
+    const common = {
+      v: 1 as const,
+      chain: "1",
+      contract: "0x1111111111111111111111111111111111111111" as const,
+      account: "0x1111111111111111111111111111111111111111" as const,
+      method: "freeze_appeal",
+      args_json: '["1","2"]',
+      pre_revision: "2",
+      pre_hash: "0".repeat(64),
+      status: "RECONCILE" as const,
+      created_ms: "1",
+    };
+    render(
+      <JournalDrawer
+        isOpen
+        records={[
+          { ...common, reservation: "a".repeat(32), intent: "freeze_appeal:1:2", tx_hash: `0x${"a".repeat(64)}` },
+          { ...common, reservation: "b".repeat(32), intent: "freeze_appeal:2:2", tx_hash: "" },
+        ]}
+        onClose={vi.fn()}
+        onRefresh={vi.fn()}
+        onReconcile={onReconcile}
+      />
+    );
+    screen.getByRole("button", { name: "Verify existing transaction" }).click();
+    expect(onReconcile).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("button", { name: "Transaction hash unavailable" })).toBeDisabled();
   });
 });
 

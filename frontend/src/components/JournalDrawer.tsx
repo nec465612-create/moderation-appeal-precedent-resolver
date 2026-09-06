@@ -5,6 +5,7 @@ export interface JournalDrawerProps {
   records: JournalRecord[];
   onClose: () => void;
   onRefresh: () => Promise<void>;
+  onReconcile: (record: JournalRecord) => Promise<void>;
   explorerUrl?: string;
 }
 
@@ -13,6 +14,7 @@ export function JournalDrawer({
   records,
   onClose,
   onRefresh,
+  onReconcile,
   explorerUrl,
 }: JournalDrawerProps) {
   if (!isOpen) return null;
@@ -110,6 +112,18 @@ export function JournalDrawer({
                           Explorer ↗
                         </a>
                       )}
+                    </div>
+                  )}
+                  {record.status === "RECONCILE" && (
+                    <div className="meta-field full-width">
+                      <button
+                        type="button"
+                        className="btn-refresh-journal"
+                        onClick={() => void onReconcile(record)}
+                        disabled={!record.tx_hash}
+                      >
+                        {record.tx_hash ? "Verify existing transaction" : "Transaction hash unavailable"}
+                      </button>
                     </div>
                   )}
                   <div className="meta-field full-width">
