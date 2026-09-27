@@ -1,9 +1,24 @@
 AGENTS.md
 CLAUDE.md
 docs/preflight/
+docs/ANONYMOUS-PRE-DEPLOY-PROMPT.md
 probes/
 __pycache__/
 .pytest_cache/
 frontend/node_modules/
 frontend/dist/
 frontend/*.tsbuildinfo
+
+# Internal governance, research, preflight and local evidence
+AGENTS.md
+CLAUDE.md
+RESEARCH-HANDOFF.md
+STAGE-1.md
+STAGE-2.md
+docs/IMPLEMENTATION-PLAN.md
+docs/IMPLEMENTATION-EVIDENCE.md
+docs/PRE-DEPLOY-PACKAGE.md
+docs/RPC-BUDGET.md
+docs/SPEC-LOCK-EVIDENCE.md
+docs/preflight/
+probes/
