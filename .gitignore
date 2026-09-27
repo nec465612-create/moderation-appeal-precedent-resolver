@@ -23,3 +23,6 @@ docs/SPEC-LOCK-EVIDENCE.md
 docs/FRONTEND-DESIGN-RATIONALE.md
 docs/preflight/
 probes/
+
+.vercel
+.env*
