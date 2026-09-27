@@ -1,11 +1,14 @@
-# { "Depends": "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6" }
+# { "Depends": "py-genlayer:5jycge4q8k23462jtb0b9fyey1s9qz928sz2nbrd9mg4sxqg2qng" }
 
 import hashlib
 import json
 import re
 from datetime import datetime, timezone
 
+import genlayer as gl
 from genlayer import *
+
+TreeMap = gl.storage.TreeMap
 
 
 MAX_U256 = 2**256 - 1
@@ -66,7 +69,7 @@ def _text(value, maximum: int, empty: bool = False) -> str:
 
 
 def _address(value) -> str:
-    text = str(value).lower()
+    text = str(getattr(value, "as_hex", value)).lower()
     if not ADDRESS_RE.fullmatch(text) or text == "0x" + "0" * 40:
         raise gl.UserError("BAD_ADDRESS")
     return text
@@ -136,7 +139,7 @@ def _outcome(snapshot, labels):
     return "CONFLICTING_PRECEDENTS"
 
 
-class ModerationAppealPrecedentResolver(gl.Contract):
+class ModerationAppealPrecedentResolver(gl.contract.Contract):
     case_count: u256
     cases: TreeMap[u256, str]
     nonce_index: TreeMap[str, u256]
@@ -150,9 +153,8 @@ class ModerationAppealPrecedentResolver(gl.Contract):
     precedents: TreeMap[u256, str]
     rule_index: TreeMap[str, str]
 
-    def __init__(self, authority: Address) -> None:
-        _address(authority)
-        self.registry_authority = authority
+    def __init__(self) -> None:
+        self.registry_authority = gl.message.sender_address
         self.registry_revision = 0
         self.precedent_count = 0
         self.case_count = 0

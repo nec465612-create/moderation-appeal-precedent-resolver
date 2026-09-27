@@ -55,6 +55,8 @@ fake.gl = types.SimpleNamespace(
     vm=Vm(),
     nondet=Nondet(),
 )
+fake.gl.contract = types.SimpleNamespace(Contract=object)
+fake.gl.storage = types.SimpleNamespace(TreeMap=TreeMap)
 fake.TreeMap = TreeMap
 fake.u256 = int
 fake.Address = str
@@ -69,7 +71,8 @@ spec.loader.exec_module(contract)
 
 
 def resolver(authority="0x" + "a" * 40):
-    value = contract.ModerationAppealPrecedentResolver(authority)
+    fake.gl.message.sender_address = authority
+    value = contract.ModerationAppealPrecedentResolver()
     value.cases = TreeMap()
     value.nonce_index = TreeMap()
     value.actor_index = TreeMap()
@@ -233,3 +236,10 @@ def test_pagination_and_missing_reads_are_bounded():
     assert json.loads(value.list_cases(1, 4)) == {"ids": [], "next": "0"}
     with pytest.raises(UserError, match="BAD_PAGE"):
         value.list_cases(0, 4)
+
+
+def test_address_normalizes_runtime_calldata_address():
+    class RuntimeAddress:
+        as_hex = "0x" + "ab" * 20
+
+    assert contract._address(RuntimeAddress()) == "0x" + "ab" * 20
